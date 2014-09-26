@@ -4,6 +4,7 @@ exec "run_worker.sh"
 # Include the Javascript file that Phantom will execute
 file "liker.js"
 
+dir "node_modules"
 file "package.json"
 file "run_worker.sh"
 
