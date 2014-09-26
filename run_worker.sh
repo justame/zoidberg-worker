@@ -1,0 +1,1 @@
+PATH=$PATH:`pwd`/ ./node_modules/casperjs/bin/casperjs liker.js "$@"

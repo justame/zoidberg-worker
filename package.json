@@ -1,0 +1,16 @@
+{
+  "name": "zoidberg-worker",
+  "version": "0.0.0",
+  "dependencies": {
+    "casperjs": "",
+    "handlebars": "",
+    "phantom": "",
+    "phantomjs": "",
+    "q": "",
+    "restler": "",
+    "underscore": ""
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
