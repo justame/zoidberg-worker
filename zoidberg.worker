@@ -5,6 +5,7 @@ exec "run-worker.sh"
 file "liker.js"
 
 file "package.json"
+file "run-worker.sh"
 
 # include config file
 file "iron.json"
