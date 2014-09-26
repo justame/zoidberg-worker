@@ -1,1 +1,1 @@
-PATH=$PATH:`pwd`/ ./node_modules/phantomjs/lib/phantom/bin/phantomjs liker.js "$@"
+PATH=$PATH:`pwd`/ ./node_modules/phantomjs/lib/phantom/bin/phantomjs --load-images=false --ignore-ssl-errors=true --web-security=false liker.js "$@"

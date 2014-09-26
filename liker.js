@@ -101,3 +101,4 @@ then(function(){
 
 
 casper.run();
+phantom.exit();
