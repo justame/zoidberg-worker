@@ -1,1 +1,1 @@
-PATH=$PATH:`pwd`/ ./node_modules/casperjs/bin/casperjs liker.js "$@"
+PATH=$PATH:`pwd`/ ./node_modules/phantomjs/lib/phantom/bin/phantomjs liker.js "$@"
