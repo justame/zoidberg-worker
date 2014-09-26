@@ -1,2 +1,2 @@
-npm config set registry http://registry.npmjs.org/
-npm install
+# npm config set registry http://registry.npmjs.org/
+# npm install
