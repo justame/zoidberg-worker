@@ -1,5 +1,5 @@
 runtime "binary"
-exec "run-worker.sh"
+exec "run_worker.sh"
 
 # Include the Javascript file that Phantom will execute
 file "liker.js"

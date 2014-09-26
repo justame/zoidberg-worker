@@ -9,8 +9,5 @@
     "q": "",
     "restler": "",
     "underscore": ""
-  },
-  "engines": {
-    "node": ">=0.8.0"
   }
 }
