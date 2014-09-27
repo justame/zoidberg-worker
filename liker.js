@@ -1,20 +1,22 @@
-// phantom.casperPath = './node_modules/casperjs/';
-// phantom.injectJs(phantom.casperPath + '/bin/bootstrap.js');
-var x = require('casper').selectXPath;
-// var payloadIndex = -1;
-// process.argv.forEach(function(val, index, array) {
-//   if (val == "-payload") payloadIndex = index + 1;
-// });
-// var payload = JSON.parse(fs.readFileSync(process.argv[payloadIndex]));
+phantom.casperPath = './node_modules/casperjs/';
+phantom.injectJs(phantom.casperPath + '/bin/bootstrap.js');
 
-var payload = {};
-payload.username = "justame@gmail.com";
-payload.password = "nirvana123";
-// payload.jobId = "1"
-// payload.taskId
-// payload.websiteId
-payload.loginUrl = 'https://www.okcupid.com/login';
-payload.quantity = 20;
+var x = require('casper').selectXPath;
+var payloadIndex = -1;
+
+process.argv.forEach(function(val, index, array) {
+  if (val == "-payload") payloadIndex = index + 1;
+});
+var payload = JSON.parse(fs.readFileSync(process.argv[payloadIndex]));
+
+// var payload = {};
+// payload.username = "justame@gmail.com";
+// payload.password = "nirvana123";
+// // payload.jobId = "1"
+// // payload.taskId
+// // payload.websiteId
+// payload.loginUrl = 'https://www.okcupid.com/login';
+// payload.quantity = 20;
 
 
 console.log("payload:", payload);
@@ -110,9 +112,8 @@ waitFor(function checkIfEnoughUsers() {
 thenEvaluate(function() {
   var users = {};
   var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
-  console.log(_.keys(users).length + ' users found');
+  console.log(unlikedUsersButtons.length + ' users found');
 })
-
 
 
 casper.run();
