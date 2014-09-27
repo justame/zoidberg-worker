@@ -13,23 +13,23 @@ system.args.forEach(function(arg) {
 
 var payload = JSON.parse(fs.read('/mnt/task/task_payload.json'));
 
-// process.argv.forEach(function(val, index, array) {
-//   if (val == "-payload") payloadIndex = index + 1;
-// });
-// var payload = {};
+process.argv.forEach(function(val, index, array) {
+  if (val == "-payload") payloadIndex = index + 1;
+});
 
 // var payload = {};
 // payload.username = "justame@gmail.com";
 // payload.password = "nirvana123";
-// // payload.jobId = "1"
-// // payload.taskId
-// // payload.websiteId
-// payload.token = 'https://www.okcupid.com/login';
+// payload.jobId = 38;
+// payload.taskId = 46;
+// payload.websiteId = 1;
+// payload.token = '439839205gkljdklgj$2121dsjkgjfdklgj';
 // payload.loginUrl = 'https://www.okcupid.com/login';
-// payload.quantity = 70;
+// payload.quantity = 5;
+// payload.apiHost = 'http://localhost:3000';
 
-Object.keys(payload).forEach(function(key){
-  console.log(key + ': '+ payload[key]);
+Object.keys(payload).forEach(function(key) {
+  console.log(key + ': ' + payload[key]);
 });
 
 console.log("payload:", payload);
@@ -67,7 +67,7 @@ casper.on('page.error', function(msg, trace) {
     this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
   }
 });
-console.log('payload.quantity :' + payload.quantity)
+console.log('payload.quantity :' + payload.quantity);
 // var url = 'https://www.okcupid.com/login';
 var url = payload.loginUrl;
 
@@ -99,8 +99,9 @@ then(function() {
   this.scrollToBottom();
 }).
 then(function() {
-  this.evaluate(function(quantity) {
+  this.evaluate(function likeAutomated(quantity, payload) {
     var users = {};
+    var likeInProgress = false;
 
     function scrollDown() {
       console.log('scrolling down');
@@ -108,7 +109,70 @@ then(function() {
       console.log('document.body.scrollHeight=' + document.body.scrollHeight);
       window.document.body.scrollTop = document.body.scrollHeight;
       window.scrollTo(0, 99999);
-    }
+    };
+
+    function getUnlikedUsers() {
+      console.log('getUnlikedUsers');
+
+      var unlikedUsersButtons = jQuery('button.binary_rating_button.like:not(.liked):not(.marked)');
+
+      var filteredUsersList = unlikedUsersButtons.filter(function(index) {
+        var userId = jQuery(this).data().tuid;
+        if (!users[userId]) {
+          return true;
+        }
+      });
+
+      return filteredUsersList;
+    };
+
+    function likeUser(likeButton, index) {
+      console.log('likeUser');
+      jQuery(likeButton).click();
+      jQuery(likeButton).addClass('marked');
+      // jQuery(likeButton).closest('.match_card_wrapper').css('border', 'solid 3px red');
+      var userData = extractUserData(jQuery(likeButton));
+      users[userData.userId] = userData;
+      sendUserLikeToServer(userData);
+    };
+
+    function likeAvaliableUsers(timePerLike, onDone) {
+      console.log('likeAvaliableUsers');
+      likeInProgress = true;
+      var usersToLike = getUnlikedUsers();
+      console.log('user to like :' + usersToLike.length);
+
+      usersToLike.each(function(index, likeButton) {
+        setTimeout(function() {
+          if (Object.keys(users).length < quantity) {
+            likeUser(likeButton, index);
+          }
+          if (usersToLike.length == index + 1) {
+            likeInProgress = false;
+            onDone()
+          }
+        }, index * 2000);
+      });
+      if (usersToLike.length == 0) {
+        likeInProgress = false;
+      }
+    };
+
+    function sendUserLikeToServer(userData) {
+      console.log('sendUserLikeToServer');
+      jQuery.post(payload.apiHost + '/api/like_tracks.json',{
+        token: payload.token,
+        website_id: payload.websiteId,
+        external_unique_id: userData.userId,
+        name: userData.userName,
+        main_image_url: userData.mainImageUrl,
+        user_id: payload.userId,
+        job_id: payload.jobId,
+        task_id: payload.taskId
+      }, function(){
+        console.log('sent to server userData');
+      })
+    };
 
     function extractUserData(likeButton) {
       var wrapperElement = likeButton.closest('.match_card_wrapper');
@@ -126,32 +190,46 @@ then(function() {
       }
     };
 
-    var timer = setInterval(function checkIfEnoughUsersFirst() {
-      scrollDown();
-      var unlikedUsersButtons = jQuery('button.binary_rating_button.like:not(.liked)');
-      unlikedUsersButtons.each(function(index, likeButton) {
-        var userData = extractUserData(jQuery(likeButton));
-        users[userData.userId] = userData;
-      });
-      var usersCount = Object.keys(users).length;
-      console.log('found until now :' + usersCount);
-      console.log('quantity is :' + quantity);
-      if (usersCount >= quantity) {
-        //saving users data in a textarea
-        var textarea = jQuery('<textarea>').attr('id', 'zoidberg-users').val(JSON.stringify(users));
-        jQuery('body').append(textarea);
-        clearInterval(timer);
+    function isAllUsersLiked() {
+      console.log('isAllUsersLiked');
+
+      if (Object.keys(users).length >= quantity) {
+        return true;
+      } else {
+        return false;
       }
-    }, 2000);
-  }, payload.quantity)
-}).
-waitForSelector('#zoidberg-users', function() {
-  this.evaluate(function() {
-    var users = JSON.parse(jQuery('#zoidberg-users').val());
-    setTimeout(function() {
+    };
+
+    function onLikeComplete() {
+      console.log('~~~~~~~~~~~ complete likes ~~~~~~~~~~~');
+      console.log('users count :' + Object.keys(users).length);
       jQuery('<div>').attr('id', 'zoidberg-complete').appendTo('body');
-    }, 20000)
-  })
+    };
+
+    var timeToWaitPerClick = 2500;
+    var timeToCheckIfLikesDone = 5000;
+
+    var timer = setInterval(function() {
+      console.log('likeInProgress: ' + likeInProgress);
+      console.log('isAllUsersLiked(): ' + isAllUsersLiked());
+      console.log('liked users count : ' + Object.keys(users).length);
+
+      if (!isAllUsersLiked() && likeInProgress == false) {
+        likeAvaliableUsers(timeToWaitPerClick, function() {
+          scrollDown();
+        });
+      } else {
+        if (isAllUsersLiked()) {
+          onLikeComplete();
+          clearTimeout(timer);
+        }
+      }
+    }, timeToCheckIfLikesDone);
+
+    likeAvaliableUsers(timeToWaitPerClick, function() {
+      scrollDown();
+    });
+  }, payload.quantity, payload);
 }).
 waitForSelector('#zoidberg-complete', function() {
   console.log('worker finished successfully');
