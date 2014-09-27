@@ -13,10 +13,6 @@ system.args.forEach(function(arg) {
 
 var payload = JSON.parse(fs.read('/mnt/task/task_payload.json'));
 
-process.argv.forEach(function(val, index, array) {
-  if (val == "-payload") payloadIndex = index + 1;
-});
-
 // var payload = {};
 // payload.username = "justame@gmail.com";
 // payload.password = "nirvana123";
@@ -160,7 +156,7 @@ then(function() {
 
     function sendUserLikeToServer(userData) {
       console.log('sendUserLikeToServer');
-      jQuery.post(payload.apiHost + '/api/like_tracks.json',{
+      jQuery.post(payload.apiHost + '/api/like_tracks.json', {
         token: payload.token,
         website_id: payload.websiteId,
         external_unique_id: userData.userId,
@@ -169,7 +165,7 @@ then(function() {
         user_id: payload.userId,
         job_id: payload.jobId,
         task_id: payload.taskId
-      }, function(){
+      }, function() {
         console.log('sent to server userData');
       })
     };
@@ -203,7 +199,23 @@ then(function() {
     function onLikeComplete() {
       console.log('~~~~~~~~~~~ complete likes ~~~~~~~~~~~');
       console.log('users count :' + Object.keys(users).length);
-      jQuery('<div>').attr('id', 'zoidberg-complete').appendTo('body');
+      console.log('api:' + payload.apiHost + '/api/tasks/' + payload.taskId);
+
+      jQuery.ajax(payload.apiHost + '/api/tasks/' + payload.taskId, {
+        type: 'PUT',
+        data: {
+          token: payload.token,
+          status: 'complete'
+        },
+        success: function() {
+          console.log('succeeded to update task status');
+          jQuery('<div>').attr('id', 'zoidberg-complete').appendTo('body');
+        }
+      })
+      setTimeout(function(){
+        console.log('failed to update task status');
+        jQuery('<div>').attr('id', 'zoidberg-complete').appendTo('body');
+      },5000)
     };
 
     var timeToWaitPerClick = 2500;
@@ -231,6 +243,7 @@ then(function() {
     });
   }, payload.quantity, payload);
 }).
+
 waitForSelector('#zoidberg-complete', function() {
   console.log('worker finished successfully');
 })
