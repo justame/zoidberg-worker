@@ -1,13 +1,22 @@
 phantom.casperPath = './node_modules/casperjs/';
 phantom.injectJs(phantom.casperPath + '/bin/bootstrap.js');
 
+var system = require('system');
+var fs = require('fs');
 var x = require('casper').selectXPath;
 var payloadIndex = -1;
 
-process.argv.forEach(function(val, index, array) {
-  if (val == "-payload") payloadIndex = index + 1;
+console.log('system.args');
+system.args.forEach(function(arg) {
+  console.log(arg);
 });
-var payload = JSON.parse(fs.readFileSync(process.argv[payloadIndex]));
+
+var payload = JSON.parse(fs.read('/mnt/task/task_payload.json'));
+
+// process.argv.forEach(function(val, index, array) {
+//   if (val == "-payload") payloadIndex = index + 1;
+// });
+// var payload = {};
 
 // var payload = {};
 // payload.username = "justame@gmail.com";
@@ -15,9 +24,13 @@ var payload = JSON.parse(fs.readFileSync(process.argv[payloadIndex]));
 // // payload.jobId = "1"
 // // payload.taskId
 // // payload.websiteId
+// payload.token = 'https://www.okcupid.com/login';
 // payload.loginUrl = 'https://www.okcupid.com/login';
-// payload.quantity = 20;
+// payload.quantity = 70;
 
+Object.keys(payload).forEach(function(key){
+  console.log(key + ': '+ payload[key]);
+});
 
 console.log("payload:", payload);
 
@@ -96,25 +109,58 @@ then(function() {
       window.document.body.scrollTop = document.body.scrollHeight;
       window.scrollTo(0, 99999);
     }
-    console.log(quantity)
-    for (var i = 0; i < Math.ceil(quantity / 6); i++) {
+
+    function extractUserData(likeButton) {
+      var wrapperElement = likeButton.closest('.match_card_wrapper');
+      var linkNameElement = wrapperElement.find('a.name');
+      var imageWrapperElement = wrapperElement.find('.image_wrapper');
+
+      var userId = likeButton.data().tuid;
+      var userName = linkNameElement.text().trim();
+      var mainImageUrl = imageWrapperElement.data().imageUrl;
+
+      return {
+        userId: userId,
+        userName: userName,
+        mainImageUrl: mainImageUrl
+      }
+    };
+
+    var timer = setInterval(function checkIfEnoughUsersFirst() {
       scrollDown();
-      setTimeout(scrollDown, i * 2000);
-    }
+      var unlikedUsersButtons = jQuery('button.binary_rating_button.like:not(.liked)');
+      unlikedUsersButtons.each(function(index, likeButton) {
+        var userData = extractUserData(jQuery(likeButton));
+        users[userData.userId] = userData;
+      });
+      var usersCount = Object.keys(users).length;
+      console.log('found until now :' + usersCount);
+      console.log('quantity is :' + quantity);
+      if (usersCount >= quantity) {
+        //saving users data in a textarea
+        var textarea = jQuery('<textarea>').attr('id', 'zoidberg-users').val(JSON.stringify(users));
+        jQuery('body').append(textarea);
+        clearInterval(timer);
+      }
+    }, 2000);
   }, payload.quantity)
 }).
-waitFor(function checkIfEnoughUsers() {
-  return this.evaluate(function(quantity) {
-    var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
-    return unlikedUsersButtons.length >= quantity
-  }, payload.quantity);
-}, function() {}, function() {}, payload.quantity * 2000).
-thenEvaluate(function() {
-  var users = {};
-  var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
-  console.log(unlikedUsersButtons.length + ' users found');
+waitForSelector('#zoidberg-users', function() {
+  this.evaluate(function() {
+    var users = JSON.parse(jQuery('#zoidberg-users').val());
+    setTimeout(function() {
+      jQuery('<div>').attr('id', 'zoidberg-complete').appendTo('body');
+    }, 20000)
+  })
+}).
+waitForSelector('#zoidberg-complete', function() {
+  console.log('worker finished successfully');
 })
 
-
-casper.run();
+casper.run(function() {
+  phantom.exit();
+});
+setTimeout(function() {
+  phantom.exit();
+}, 1000 * 60 * 30);
 // phantom.exit();
