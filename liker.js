@@ -1,5 +1,23 @@
-phantom.casperPath = './node_modules/casperjs/';
-phantom.injectJs(phantom.casperPath + '/bin/bootstrap.js');
+// phantom.casperPath = './node_modules/casperjs/';
+// phantom.injectJs(phantom.casperPath + '/bin/bootstrap.js');
+var x = require('casper').selectXPath;
+// var payloadIndex = -1;
+// process.argv.forEach(function(val, index, array) {
+//   if (val == "-payload") payloadIndex = index + 1;
+// });
+// var payload = JSON.parse(fs.readFileSync(process.argv[payloadIndex]));
+
+var payload = {};
+payload.username = "justame@gmail.com";
+payload.password = "nirvana123";
+// payload.jobId = "1"
+// payload.taskId
+// payload.websiteId
+payload.loginUrl = 'https://www.okcupid.com/login';
+payload.quantity = 20;
+
+
+console.log("payload:", payload);
 
 var casper = require('casper').create({
   verbose: true,
@@ -14,91 +32,88 @@ var casper = require('casper').create({
     width: 1504,
     height: 600
   },
-  verbose: true   
-
+  verbose: true
 });
 
 var timeouts = {
-    defaultTime: 5000,
-    login: 8000
-  }
-  // print out all the messages in the headless browser context
+  defaultTime: 5000,
+  login: 8000,
+  likeTimePerUser: 4000
+};
+// print out all the messages in the headless browser context
 casper.on('remote.message', function(msg) {
   this.echo('remote message caught: ' + msg);
 });
 
-// print out all the messages in the headless browser context
-casper.on("page.error", function(msg, trace) {
-  this.echo("Page Error: " + msg, "ERROR");
+casper.on('page.error', function(msg, trace) {
+  this.echo('Error: ' + msg, 'ERROR');
+  for (var i = 0; i < trace.length; i++) {
+    var step = trace[i];
+    this.echo('   ' + step.file + ' (line ' + step.line + ')', 'ERROR');
+  }
 });
-
-var url = 'https://www.okcupid.com/login';
-// var url = 'http://www.ynet.co.il/home/0,7340,L-2,00.html';
-// var url = 'http://www.wix.com';
+console.log('payload.quantity :' + payload.quantity)
+// var url = 'https://www.okcupid.com/login';
+var url = payload.loginUrl;
 
 casper.start(url, function() {
-  // search for 'casperjs' from google form
   console.log("page loaded");
-  if (this.exists('form#loginbox_form')) {
-    this.echo('login form found');
-  }
+});
+casper.options.waitTimeout = 1000 * 60 * 60;
+
+casper.waitForSelector("form#loginbox_form input[name='username']", function() {
   console.log('filling form');
   this.fill('form#loginbox_form', {
-    username: 'justame@gmail.com',
-    password: 'nirvana123'
+    username: payload.username,
+    password: payload.password
   }, true);
 });
 
-casper.wait(timeouts.login, function() {
+casper.waitForSelector('#nav_matches > a', function() {
+  this.click('#nav_matches > a');
+});
+
+casper.waitForSelector('#submit_button', function() {
+  console.log('Browsr matches page');
   casper.thenEvaluate(function() {
     console.log("Page Title " + document.title);
   });
 }).
 then(function() {
-  console.log('click on browse users');
-  this.click('#nav_matches > a');
-}).then(function(){
-  // this.viewport(1524, 5068);
+  console.log('scroll to bottom');
+  this.scrollToBottom();
 }).
-then(function(){
-  this.scrollToBottom()
+then(function() {
+  this.evaluate(function(quantity) {
+    var users = {};
+
+    function scrollDown() {
+      console.log('scrolling down');
+      console.log('window.document.body.scrollTop=' + window.document.body.scrollTop);
+      console.log('document.body.scrollHeight=' + document.body.scrollHeight);
+      window.document.body.scrollTop = document.body.scrollHeight;
+      window.scrollTo(0, 99999);
+    }
+    console.log(quantity)
+    for (var i = 0; i < Math.ceil(quantity / 6); i++) {
+      scrollDown();
+      setTimeout(scrollDown, i * 2000);
+    }
+  }, payload.quantity)
+}).
+waitFor(function checkIfEnoughUsers() {
+  return this.evaluate(function(quantity) {
+    var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
+    return unlikedUsersButtons.length >= quantity
+  }, payload.quantity);
+}, function() {}, function() {}, payload.quantity * 2000).
+thenEvaluate(function() {
+  var users = {};
+  var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
+  console.log(_.keys(users).length + ' users found');
 })
-.then(function() {
-  this.wait(timeouts.defaultTime, function() {
-    casper.thenEvaluate(function() {
-
-      console.log("Page Title " + document.title);
-      var users = {};
-      var scrollInterval = setInterval(function() {
-        console.log('scrolling down');
-        console.log('window.document.body.scrollTop=' + window.document.body.scrollTop);
-        console.log('document.body.scrollHeight=' + document.body.scrollHeight);
-        window.scrollTo(0,99999);
-        window.document.body.scrollTop = document.body.scrollHeight;
-        var unlikedUsersButtons = jQuery('button.binary_rating_button.like:not(.liked)');
-        unlikedUsersButtons.each(function(index, elm){
-          var id = jQuery(elm).attr('data-tuid');
-          users[id] = true;
-        })
-      }, 2000);
-
-
-      setTimeout(function() {
-        clearInterval(scrollInterval);
-        // jQuery.post('http://localhost:3000/api/like_tracks.json',{like_track: {user_id: 2}})
-        console.log('getting unliked users count');
-        var unlikedUsersButtons = document.querySelectorAll('button.binary_rating_button.like:not(.liked)');
-        console.log(_.keys(users).length + ' users found');
-      }, (2000 * 4));
-    });
-  })
-}).then(function(){
-  this.wait(2000 * 5, function() {
-  });
-})
-
 
 
 
 casper.run();
-phantom.exit();
+// phantom.exit();
