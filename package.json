@@ -5,9 +5,8 @@
     "casperjs": "",
     "handlebars": "",
     "phantom": "",
-    "phantomjs": "",
     "q": "",
-    "restler": "",
+    "restler": "https://github.com/danwrong/restler/tarball/master",
     "underscore": ""
   }
 }

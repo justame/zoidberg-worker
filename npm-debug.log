@@ -1,0 +1,119 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose node symlink /usr/bin/node
+5 warn package.json zoidberg-worker@0.0.0 No repository field.
+6 verbose readDependencies using package.json deps
+7 verbose install where, deps [ '/home/yaron/development/zoidberg-worker',
+7 verbose install   [ 'casperjs',
+7 verbose install     'handlebars',
+7 verbose install     'phantom',
+7 verbose install     'q',
+7 verbose install     'restler',
+7 verbose install     'underscore' ] ]
+8 info preinstall zoidberg-worker@0.0.0
+9 verbose readDependencies using package.json deps
+10 verbose already installed skipping q@ /home/yaron/development/zoidberg-worker
+11 verbose cache add [ 'restler@git@github.com:danwrong/restler.git', null ]
+12 verbose cache add name=undefined spec="restler@git@github.com:danwrong/restler.git" args=["restler@git@github.com:danwrong/restler.git",null]
+13 verbose parsed url { protocol: null,
+13 verbose parsed url   slashes: null,
+13 verbose parsed url   auth: null,
+13 verbose parsed url   host: null,
+13 verbose parsed url   port: null,
+13 verbose parsed url   hostname: null,
+13 verbose parsed url   hash: null,
+13 verbose parsed url   search: null,
+13 verbose parsed url   query: null,
+13 verbose parsed url   pathname: 'restler@git@github.com:danwrong/restler.git',
+13 verbose parsed url   path: 'restler@git@github.com:danwrong/restler.git',
+13 verbose parsed url   href: 'restler@git@github.com:danwrong/restler.git' }
+14 verbose already installed skipping underscore@ /home/yaron/development/zoidberg-worker
+15 verbose already installed skipping casperjs@ /home/yaron/development/zoidberg-worker
+16 verbose already installed skipping handlebars@ /home/yaron/development/zoidberg-worker
+17 verbose already installed skipping phantom@ /home/yaron/development/zoidberg-worker
+18 verbose cache add name="restler" spec="git@github.com:danwrong/restler.git" args=["restler","git@github.com:danwrong/restler.git"]
+19 verbose parsed url { protocol: null,
+19 verbose parsed url   slashes: null,
+19 verbose parsed url   auth: null,
+19 verbose parsed url   host: null,
+19 verbose parsed url   port: null,
+19 verbose parsed url   hostname: null,
+19 verbose parsed url   hash: null,
+19 verbose parsed url   search: null,
+19 verbose parsed url   query: null,
+19 verbose parsed url   pathname: 'git@github.com:danwrong/restler.git',
+19 verbose parsed url   path: 'git@github.com:danwrong/restler.git',
+19 verbose parsed url   href: 'git@github.com:danwrong/restler.git' }
+20 verbose addNamed [ 'restler', 'git@github.com:danwrong/restler.git' ]
+21 verbose addNamed [ null, null ]
+22 silly lockFile 166b4cc3--github-com-danwrong-restler-git restler@git@github.com:danwrong/restler.git
+23 verbose lock restler@git@github.com:danwrong/restler.git /home/yaron/.npm/166b4cc3--github-com-danwrong-restler-git.lock
+24 info addNameTag [ 'restler', 'git@github.com:danwrong/restler.git' ]
+25 verbose request where is /restler
+26 verbose request registry https://registry.npmjs.org/
+27 verbose request id fa107c8d30a3866b
+28 verbose url raw /restler
+29 verbose url resolving [ 'https://registry.npmjs.org/', './restler' ]
+30 verbose url resolved https://registry.npmjs.org/restler
+31 verbose request where is https://registry.npmjs.org/restler
+32 info trying registry request attempt 1 at 20:56:40
+33 verbose etag "CNOUSNTYSNCAW8DRJPJ4J98ZQ"
+34 http GET https://registry.npmjs.org/restler
+35 http 304 https://registry.npmjs.org/restler
+36 silly registry.get cb [ 304,
+36 silly registry.get   { date: 'Sat, 06 Dec 2014 18:56:42 GMT',
+36 silly registry.get     server: 'Apache',
+36 silly registry.get     via: '1.1 varnish',
+36 silly registry.get     'last-modified': 'Sat, 06 Dec 2014 18:56:42 GMT',
+36 silly registry.get     'cache-control': 'max-age=60',
+36 silly registry.get     etag: '"CNOUSNTYSNCAW8DRJPJ4J98ZQ"',
+36 silly registry.get     age: '0',
+36 silly registry.get     'x-served-by': 'cache-fra1225-FRA',
+36 silly registry.get     'x-cache': 'HIT',
+36 silly registry.get     'x-cache-hits': '1',
+36 silly registry.get     'x-timer': 'S1417892202.738590,VS0,VE180',
+36 silly registry.get     vary: 'Accept',
+36 silly registry.get     'content-length': '0',
+36 silly registry.get     'keep-alive': 'timeout=10, max=50',
+36 silly registry.get     connection: 'Keep-Alive' } ]
+37 verbose etag https://registry.npmjs.org/restler from cache
+38 info maybeGithub Attempting git@github.com:danwrong/restler.git from git://github.com/git@github.com:danwrong/restler.git
+39 silly lockFile 33ca5586--github-com-danwrong-restler-git git://github.com/git@github.com:danwrong/restler.git
+40 verbose lock git://github.com/git@github.com:danwrong/restler.git /home/yaron/.npm/33ca5586--github-com-danwrong-restler-git.lock
+41 verbose addRemoteGit [ 'git://github.com/git@github.com:danwrong/restler.git',
+41 verbose addRemoteGit   'master' ]
+42 verbose git clone git://github.com/git@github.com:danwrong/restler.git Cloning into bare repository '/home/yaron/.npm/_git-remotes/git-github-com-git-github-com-danwrong-restler-git-33ca5586'...
+42 verbose git clone git://github.com/git@github.com:danwrong/restler.git fatal: remote error:
+42 verbose git clone git://github.com/git@github.com:danwrong/restler.git   git@github.com:danwrong/restler is not a valid repository name
+42 verbose git clone git://github.com/git@github.com:danwrong/restler.git   Email support@github.com for help
+43 silly lockFile 33ca5586--github-com-danwrong-restler-git git://github.com/git@github.com:danwrong/restler.git
+44 silly lockFile 33ca5586--github-com-danwrong-restler-git git://github.com/git@github.com:danwrong/restler.git
+45 info maybeGithub Attempting git@github.com:danwrong/restler.git from git+ssh://git@github.com:git@github.com:danwrong/restler.git
+46 silly lockFile 20e190d7--github-com-danwrong-restler-git git@github.com:git@github.com:danwrong/restler.git
+47 verbose lock git@github.com:git@github.com:danwrong/restler.git /home/yaron/.npm/20e190d7--github-com-danwrong-restler-git.lock
+48 verbose addRemoteGit [ 'git@github.com:git@github.com:danwrong/restler.git',
+48 verbose addRemoteGit   'master' ]
+49 error git clone git@github.com:git@github.com:danwrong/restler.git Cloning into bare repository '/home/yaron/.npm/_git-remotes/git-github-com-git-github-com-danwrong-restler-git-20e190d7'...
+49 error git clone git@github.com:git@github.com:danwrong/restler.git fatal: remote error:
+49 error git clone git@github.com:git@github.com:danwrong/restler.git    is not a valid repository name
+49 error git clone git@github.com:git@github.com:danwrong/restler.git   Email support@github.com for help
+50 silly lockFile 20e190d7--github-com-danwrong-restler-git git@github.com:git@github.com:danwrong/restler.git
+51 silly lockFile 20e190d7--github-com-danwrong-restler-git git@github.com:git@github.com:danwrong/restler.git
+52 silly lockFile 166b4cc3--github-com-danwrong-restler-git restler@git@github.com:danwrong/restler.git
+53 silly lockFile 166b4cc3--github-com-danwrong-restler-git restler@git@github.com:danwrong/restler.git
+54 error notarget No compatible version found: restler@'git@github.com:danwrong/restler.git'
+54 error notarget Valid install targets:
+54 error notarget ["0.2.0","0.2.1","0.2.2","0.2.3","0.2.4","0.2.5","2.0.0","2.0.1","3.0.0","3.1.0","3.2.0","3.2.1","3.2.2"]
+54 error notarget
+54 error notarget This is most likely not a problem with npm itself.
+54 error notarget In most cases you or one of your dependencies are requesting
+54 error notarget a package version that doesn't exist.
+55 error System Linux 3.13.0-32-generic
+56 error command "/usr/bin/node" "/usr/bin/npm" "install"
+57 error cwd /home/yaron/development/zoidberg-worker
+58 error node -v v0.10.32
+59 error npm -v 1.4.28
+60 error code ETARGET
+61 verbose exit [ 1, true ]

@@ -16,9 +16,9 @@ var payload = JSON.parse(fs.read('/mnt/task/task_payload.json'));
 // var payload = {};
 // payload.username = "justame@gmail.com";
 // payload.password = "nirvana123";
-// payload.jobId = 38;
-// payload.taskId = 46;
-// payload.websiteId = 1;
+// // payload.jobId = 38;
+// // payload.taskId = 46;
+// // payload.websiteId = 1;
 // payload.token = '439839205gkljdklgj$2121dsjkgjfdklgj';
 // payload.loginUrl = 'https://www.okcupid.com/login';
 // payload.quantity = 5;
@@ -78,7 +78,32 @@ casper.waitForSelector("form#loginbox_form input[name='username']", function() {
     username: payload.username,
     password: payload.password
   }, true);
-});
+  var that = this;
+//   setInterval(function(){
+//     console.log('take picture');
+//     var base64 = that.captureBase64('png');
+//     var data = that.evaluate(function(base64) {
+//     jQuery.ajax({
+//           url: 'https://api.imgur.com/3/image',
+//           method: 'POST',
+//           headers: {
+//             Authorization: 'Client-ID c40092ddfc7ce83',
+//             Accept: 'application/json'
+//           },
+//           data: {
+//             image: base64,
+//             type: 'base64'
+//           },
+//           success: function(result) {
+//             var id = result.data.id;
+//             console.log('https://imgur.com/gallery/' + id);
+//             console.log(jQuery('#nav_matches > a').length);
+//             console.log(jQuery('#nav_matches > a').get(0).click());
+//           }
+//         });
+//     }, {base64: base64});
+//   },10000);
+// });
 
 casper.waitForSelector('#nav_matches > a', function() {
   this.click('#nav_matches > a');
@@ -234,6 +259,8 @@ then(function() {
         if (isAllUsersLiked()) {
           onLikeComplete();
           clearTimeout(timer);
+        }else{
+          phantom.exit();
         }
       }
     }, timeToCheckIfLikesDone);

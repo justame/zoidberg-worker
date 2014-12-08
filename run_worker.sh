@@ -1,1 +1,2 @@
-PATH=$PATH:`pwd`/ ./node_modules/phantomjs/lib/phantom/bin/phantomjs --load-images=false --ignore-ssl-errors=true --web-security=false liker.js "$@"
+PATH=$PATH:`pwd`/ phantomjs --load-images=false --ignore-ssl-errors=true --web-security=false --ssl-protocol=any liker.js  "$@"
+# PATH=$PATH:`pwd`/ casperjs --load-images=false --ignore-ssl-errors=true --web-security=false  --engine=slimerjs liker.js "$@"
